@@ -25,10 +25,10 @@ type itemController struct {
 }
 
 func (c *itemController) Create(w http.ResponseWriter, r *http.Request) {
-	if err := oauth.AuthenticateRequest(r); err != nil {
+	/*if err := oauth.AuthenticateRequest(r); err != nil {
 		http_utils.ResponseError(w, (*rest_errors.RestError)(err))
 		return
-	}
+	}*/
 
 	var newItem item.Item
 	requestBody, err := ioutil.ReadAll(r.Body)

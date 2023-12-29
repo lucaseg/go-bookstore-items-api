@@ -18,7 +18,10 @@ type itemService struct {
 }
 
 func (s *itemService) Create(item item.Item) (*item.Item, *rest_errors.RestError) {
-	return nil, nil
+	if err := item.Save(); err != nil {
+		return nil, err
+	}
+	return &item, nil
 }
 
 func (s *itemService) GetById(id string) (*item.Item, *rest_errors.RestError) {
