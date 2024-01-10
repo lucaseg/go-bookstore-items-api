@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/lucaseg/go-bookstore-items-api/domain/item"
+	"github.com/lucaseg/go-bookstore-items-api/domain/queries"
 	"github.com/lucaseg/go-bookstore-items-api/services"
 	"github.com/lucaseg/go-bookstore-items-api/utils/http_utils"
 	"github.com/lucaseg/go-bookstore-oauth/oauth"
@@ -59,5 +60,31 @@ func (c *itemController) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *itemController) Get(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (c *itemController) Search(w http.ResponseWriter, r *http.Request) {
+	bytes, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		restError := rest_errors.BadRequest("invalid json bosy")
+		http_utils.ResponseError(w, restError)
+		return
+	}
+
+	defer r.Body.Close()
+
+	var query queries.EsQuery
+	if err := json.Unmarshal(bytes, &query); err != nil {
+		restError := rest_errors.BadRequest("invalid json bosy")
+		http_utils.ResponseError(w, restError)
+		return
+	}
+
+	items, searchErr := services.ItemService.Search(query)
+	if searchErr != nil {
+		http_utils.ResponseError(w, searchErr)
+		return
+	}
+	http_utils.ResponseJson(w, http.StatusOK, items)
 
 }
